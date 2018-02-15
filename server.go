@@ -13,6 +13,7 @@ func main() {
 
     r.POST("/products", func(c *gin.Context) {
 
+        // TODO: Capture params and pass to Product model
         product.Create()
 
         c.JSON(200, gin.H {
