@@ -44,10 +44,12 @@ func main() {
     })
 
     r.GET("/products/query", func(c *gin.Context) {
-        c.JSON(200, gin.H {
-            "method": "GET",
-            "path": "/products/query",
-        })
+        title := c.DefaultQuery("title", "Coffee")
+        price := c.Query("price") // shortcut for c.Request.URL.Query().Get("lastname")
+
+        product.Query(title)
+
+        c.String(http.StatusOK, "Query: %s %s", title, price)
     })
 
     r.Run()

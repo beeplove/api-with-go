@@ -25,12 +25,9 @@ type Product struct {
     CreatedAt string`json:"createdAt"`
 }
 
-var service = dynamodbService.New()
+var tableName = "shipt.test"
 
 func Create(product Product) {
-    tableName := "shipt.test"
-
-
     product.CreatedAt = time.Now().Format(time.RFC3339)
 
     item, err := dynamodbattribute.MarshalMap(product)
@@ -40,5 +37,8 @@ func Create(product Product) {
         os.Exit(1)
     }
 
-    dynamodbService.AddRecord(item, tableName, service)
+    dynamodbService.AddRecord(item, tableName)
+}
+
+func Query(title string) {
 }

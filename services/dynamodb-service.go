@@ -12,6 +12,9 @@ import (
     "github.com/aws/aws-sdk-go/service/dynamodb"
 )
 
+var svc = New()
+
+
 func New() *dynamodb.DynamoDB {
     sess, err := session.NewSession(&aws.Config{
         Region: aws.String("us-west-1")},
@@ -26,7 +29,7 @@ func New() *dynamodb.DynamoDB {
     return dynamodb.New(sess)
 }
 
-func AddRecord(item map[string]*dynamodb.AttributeValue, tableName string, svc *dynamodb.DynamoDB) {
+func AddRecord(item map[string]*dynamodb.AttributeValue, tableName string) {
     input := &dynamodb.PutItemInput {
         Item: item,
         TableName: aws.String(tableName),
