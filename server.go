@@ -2,6 +2,7 @@ package main
 
 import (
     // "fmt"
+    "net/http"
 
     "github.com/gin-gonic/gin"
 
@@ -12,14 +13,26 @@ func main() {
     r := gin.Default()
 
     r.POST("/products", func(c *gin.Context) {
+        c.Header("Content-Type", "application/json; charset=utf-8")
 
-        // TODO: Capture params and pass to Product model
-        product.Create()
+        p := product.Product{}
 
-        c.JSON(200, gin.H {
-            "method": "POST",
-            "path": "/products",
+        if err := c.BindJSON(&p); err != nil {
+            c.JSON(http.StatusBadRequest, gin.H{
+                "error":  "json decoding : " + err.Error(),
+                "status": http.StatusBadRequest,
+            })
+
+            return
+        }
+
+        product.Create(p)
+
+        c.JSON(http.StatusOK, gin.H {
+            "Title": p.Title,
+            "Price": p.Price,
         })
+
     })
 
     r.GET("/products", func(c *gin.Context) {

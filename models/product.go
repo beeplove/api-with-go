@@ -1,41 +1,37 @@
 package product
 
+//
+// TODO:
+//  - Add more fields such as, categories
+//  - create shipt.test from app
+//  - need to check to conver price from float to decimal
+//
 
 import (
     "fmt"
     "os"
     "time"
-    // "reflect"
 
-    "github.com/google/uuid"
     "github.com/aws/aws-sdk-go/service/dynamodb/dynamodbattribute"
 
     "../services"
 )
 
-// 
-// TODO:
-//  - Add more fields such as, categories
-// 
+// Partition Key: Title
+// Sort Key: Price
 type Product struct {
-    Id string`json:"id"`
-    Title string`json:"title"`
-    Price float64`json:"price"`
+    Title string`json:"title" binding:"required"`
+    Price float32`json:"price" binding:"required"`
     CreatedAt string`json:"createdAt"`
 }
 
 var service = dynamodbService.New()
 
-func Create() {
+func Create(product Product) {
     tableName := "shipt.test"
-    u := uuid.New()
 
-    product := Product {
-        Id: u.String(),
-        Title: "Hazelnut coffee",
-        Price: 8.19,
-        CreatedAt: time.Now().Format(time.RFC3339),
-    }
+
+    product.CreatedAt = time.Now().Format(time.RFC3339)
 
     item, err := dynamodbattribute.MarshalMap(product)
     if err != nil {
