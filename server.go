@@ -24,8 +24,8 @@ func main() {
             })
 
             return
-        }
 
+        // TODO: what if product is not created for whatever reason
         product.Create(p)
 
         c.JSON(http.StatusOK, gin.H {
@@ -42,10 +42,10 @@ func main() {
         })
     })
 
-    r.GET("/products/search", func(c *gin.Context) {
+    r.GET("/products/query", func(c *gin.Context) {
         c.JSON(200, gin.H {
             "method": "GET",
-            "path": "/products/search",
+            "path": "/products/query",
         })
     })
 

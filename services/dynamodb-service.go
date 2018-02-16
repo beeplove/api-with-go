@@ -12,21 +12,6 @@ import (
     "github.com/aws/aws-sdk-go/service/dynamodb"
 )
 
-func AddRecord(item map[string]*dynamodb.AttributeValue, tableName string, svc *dynamodb.DynamoDB) {
-    input := &dynamodb.PutItemInput {
-        Item: item,
-        TableName: aws.String(tableName),
-    }
-
-    _, err := svc.PutItem(input)
-
-    if err != nil {
-        fmt.Println("Got error calling PutItem:")
-        fmt.Println(err.Error())
-        os.Exit(1)
-    }
-}
-
 func New() *dynamodb.DynamoDB {
     sess, err := session.NewSession(&aws.Config{
         Region: aws.String("us-west-1")},
@@ -41,3 +26,17 @@ func New() *dynamodb.DynamoDB {
     return dynamodb.New(sess)
 }
 
+func AddRecord(item map[string]*dynamodb.AttributeValue, tableName string, svc *dynamodb.DynamoDB) {
+    input := &dynamodb.PutItemInput {
+        Item: item,
+        TableName: aws.String(tableName),
+    }
+
+    _, err := svc.PutItem(input)
+
+    if err != nil {
+        fmt.Println("Got error calling PutItem:")
+        fmt.Println(err.Error())
+        os.Exit(1)
+    }
+}
