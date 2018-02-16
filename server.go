@@ -13,17 +13,19 @@ func main() {
     r := gin.Default()
 
     r.POST("/products", func(c *gin.Context) {
-        c.Header("Content-Type", "application/json; charset=utf-8")
+        c.Header("Content-Type", "application/json")
 
         p := product.Product{}
 
         if err := c.BindJSON(&p); err != nil {
-            c.JSON(http.StatusBadRequest, gin.H{
+            c.JSON(http.StatusBadRequest, gin.H {
                 "error":  "json decoding : " + err.Error(),
                 "status": http.StatusBadRequest,
             })
 
             return
+        }
+
 
         // TODO: what if product is not created for whatever reason
         product.Create(p)
@@ -32,7 +34,6 @@ func main() {
             "Title": p.Title,
             "Price": p.Price,
         })
-
     })
 
     r.GET("/products", func(c *gin.Context) {
