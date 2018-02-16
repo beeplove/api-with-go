@@ -40,5 +40,7 @@ func Create(product Product) {
     dynamodbService.AddRecord(item, tableName)
 }
 
+// TODO: Make changes to accomodate price include range and other comparable operators
 func Query(title string) {
+    dynamodbService.Query(tableName, title)
 }

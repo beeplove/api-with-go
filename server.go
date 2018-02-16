@@ -44,9 +44,12 @@ func main() {
     })
 
     r.GET("/products/query", func(c *gin.Context) {
-        title := c.DefaultQuery("title", "Coffee")
-        price := c.Query("price") // shortcut for c.Request.URL.Query().Get("lastname")
 
+        // TODO: parsing query may be efficient enough to make complex query such as with price range
+        title := c.DefaultQuery("title", "Coffee")
+        price := c.Query("price") // shortcut for c.Request.URL.Query().Get("price")
+
+        // TODO: make product.Query to return Product and return Product to the response
         product.Query(title)
 
         c.String(http.StatusOK, "Query: %s %s", title, price)
