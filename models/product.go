@@ -21,7 +21,7 @@ import (
 // Sort Key: Price
 type Product struct {
     Title string`json:"title" binding:"required"`
-    Price float32`json:"price" binding:"required"`
+    Price float64`json:"price" binding:"required"`
     CreatedAt string`json:"createdAt"`
 }
 
@@ -41,6 +41,6 @@ func Create(product Product) {
 }
 
 // TODO: Make changes to accomodate price include range and other comparable operators
-func Query(title string) {
-    dynamodbService.Query(tableName, title)
+func Query(title string, price string, comp string) {
+    dynamodbService.Query(tableName, title, price, comp)
 }

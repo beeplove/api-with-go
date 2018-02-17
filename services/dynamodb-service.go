@@ -6,7 +6,8 @@ package dynamodbService
 import (
     "fmt"
     "os"
-    
+    "strings"
+
     "github.com/aws/aws-sdk-go/aws"
     "github.com/aws/aws-sdk-go/aws/session"
     "github.com/aws/aws-sdk-go/service/dynamodb"
@@ -45,19 +46,69 @@ func AddRecord(item map[string]*dynamodb.AttributeValue, tableName string) {
     }
 }
 
-func Query(tableName string, title string) {
-    fmt.Println("Service -> Query")
+func conditionFromPrice(price string, comp string) string {
+    switch comp {
+    case "EQ":
+        return "price  = :price"
+    case "LE":
+        return "price <= :price"
+    case "LT":
+        return "price <  :price"
+    case "GE":
+        return "price >= :price"
+    case "GT":
+        return "price >  :price"
+    }
 
+    return "price  = :price"
+}
+
+func conditionFromPriceRange(price string) string {
+    return "price BETWEEN :price1 AND :price2"
+}
+
+func expressionAttributesForPriceRance(title string, price string) map[string]*dynamodb.AttributeValue {
+    prices := strings.Split(price, "-")
+
+    return map[string]*dynamodb.AttributeValue {
+        ":title": {
+            S: aws.String(title),
+        },
+        ":price1": {
+            N: aws.String(prices[0]),
+        },
+        ":price2": {
+            N: aws.String(prices[1]),
+        },
+    }
+}
+
+// Query Condition: EQ | LE | LT | GE | GT | BEGINS_WITH | BETWEEN
+// TODO: Cover scenario when price is absent
+func Query(tableName string, title string, price string, comp string) {
+    condition := "title = :title AND "
+    expressionAttributes := map[string]*dynamodb.AttributeValue {
+        ":title": {
+            S: aws.String(title),
+        },
+        ":price": {
+            N: aws.String(price),
+        },
+    }
+
+    switch comp {
+    case "EQ", "LE", "LT", "GE", "GT":
+        condition += conditionFromPrice(price, comp)
+    case "BETWEEN":
+        condition += conditionFromPriceRange(price)
+        expressionAttributes = expressionAttributesForPriceRance(title, price)
+    }
 
     // TODO: Get table metadata from model
     input := &dynamodb.QueryInput {
-        ExpressionAttributeValues: map[string]*dynamodb.AttributeValue {
-            ":v1": {
-                S: aws.String(title),
-            },
-        },
-        KeyConditionExpression: aws.String("title = :v1"),
-        TableName:              aws.String(tableName),
+        ExpressionAttributeValues:  expressionAttributes,
+        KeyConditionExpression:     aws.String(condition),
+        TableName:                  aws.String(tableName),
     }
 
     result, err := svc.Query(input)
