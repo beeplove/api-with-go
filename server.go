@@ -26,7 +26,6 @@ func main() {
             return
         }
 
-
         // TODO: what if product is not created for whatever reason
         product.Create(p)
 
@@ -36,23 +35,14 @@ func main() {
         })
     })
 
-    r.GET("/products", func(c *gin.Context) {
-        c.JSON(200, gin.H {
-            "method": "GET",
-            "path": "/products",
-        })
-    })
-
-
     r.GET("/products/query", func(c *gin.Context) {
         title :=    c.DefaultQuery("title", "Coffee")
         comp :=     c.DefaultQuery("comp", "EQ")
         price :=    c.Query("price")
 
-        // TODO: make product.Query to return Product and return Product to the response
-        product.Query(title, price, strings.ToUpper(comp))
+        products := product.Query(title, price, strings.ToUpper(comp))
 
-        c.String(http.StatusOK, "Query: %s %s", title, price)
+        c.JSON(http.StatusOK, products)
     })
 
     r.Run()

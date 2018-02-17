@@ -41,6 +41,14 @@ func Create(product Product) {
 }
 
 // TODO: Make changes to accomodate price include range and other comparable operators
-func Query(title string, price string, comp string) {
-    dynamodbService.Query(tableName, title, price, comp)
+func Query(title string, price string, comp string) []Product {
+    resp := dynamodbService.Query(tableName, title, price, comp)
+
+    products := []Product{}
+    err := dynamodbattribute.UnmarshalListOfMaps(resp.Items,  &products)
+    if err != nil {
+        fmt.Errorf("failed to unmarshal Query result items, %v", err)
+    }
+
+    return products
 }

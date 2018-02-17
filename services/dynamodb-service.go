@@ -85,7 +85,7 @@ func expressionAttributesForPriceRance(title string, price string) map[string]*d
 
 // Query Condition: EQ | LE | LT | GE | GT | BEGINS_WITH | BETWEEN
 // TODO: Cover scenario when price is absent
-func Query(tableName string, title string, price string, comp string) {
+func Query(tableName string, title string, price string, comp string) *dynamodb.QueryOutput {
     condition := "title = :title AND "
     expressionAttributes := map[string]*dynamodb.AttributeValue {
         ":title": {
@@ -129,8 +129,8 @@ func Query(tableName string, title string, price string, comp string) {
             // Message from an error.
             fmt.Println(err.Error())
         }
-        return
+        return new(dynamodb.QueryOutput)
     }
 
-    fmt.Println(result)
+    return result
 }
