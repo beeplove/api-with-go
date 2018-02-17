@@ -12,6 +12,13 @@ import (
 func main() {
     r := gin.Default()
 
+    r.GET("/health", func(c *gin.Context) {
+        c.Header("Content-Type", "application/json")
+        c.JSON(http.StatusOK, gin.H {
+            "status": "success",
+        })
+    })
+
     r.POST("/products", func(c *gin.Context) {
         c.Header("Content-Type", "application/json")
 
@@ -30,19 +37,23 @@ func main() {
         product.Create(p)
 
         c.JSON(http.StatusOK, gin.H {
-            "Title": p.Title,
-            "Price": p.Price,
+            "status": "success",
         })
     })
 
     r.GET("/products/query", func(c *gin.Context) {
+        c.Header("Content-Type", "application/json")
+
         title :=    c.DefaultQuery("title", "Coffee")
         comp :=     c.DefaultQuery("comp", "EQ")
         price :=    c.Query("price")
 
         products := product.Query(title, price, strings.ToUpper(comp))
 
-        c.JSON(http.StatusOK, products)
+        c.JSON(http.StatusOK, gin.H {
+            "status": "success",
+            "data": products,
+        })
     })
 
     r.Run()

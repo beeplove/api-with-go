@@ -16,7 +16,6 @@ import (
 
 var svc = New()
 
-
 func New() *dynamodb.DynamoDB {
     sess, err := session.NewSession(&aws.Config{
         Region: aws.String("us-west-1")},
