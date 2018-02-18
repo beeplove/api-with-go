@@ -14,9 +14,9 @@ import (
     "github.com/aws/aws-sdk-go/aws/awserr"
 )
 
-var svc = New()
+var svc = new()
 
-func New() *dynamodb.DynamoDB {
+func new() *dynamodb.DynamoDB {
     sess, err := session.NewSession(&aws.Config {
         Region: aws.String("us-west-1")},
     )
@@ -141,7 +141,7 @@ func Query(tableName string, title string, price string, comp string) *dynamodb.
             // Message from an error.
             fmt.Println(err.Error())
         }
-        return new(dynamodb.QueryOutput)
+        return &dynamodb.QueryOutput{}
     }
 
     return result
