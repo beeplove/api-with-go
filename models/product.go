@@ -4,7 +4,6 @@ package product
 // TODO:
 //  - Add more fields such as, categories
 //  - create shipt.test from app
-//  - need to check to conver price from float to decimal
 //
 
 import (
@@ -17,11 +16,15 @@ import (
     "../services"
 )
 
-// Partition Key: Title
-// Sort Key: Price
+/**
+ * Partition Key: Title
+ *  Title doesn't seems to be agod Partition Key, perhaps primaryCategory,
+ *  For now keeping Title as Partition key just for demonstration purpose
+ * Sort Key: Price
+**/
 type Product struct {
     Title string`json:"title" binding:"required"`
-    Price float64`json:"price" binding:"required"`
+    Price int64`json:"price" binding:"required"`
     CreatedAt string`json:"createdAt"`
 }
 
