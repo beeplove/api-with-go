@@ -23,9 +23,9 @@ import (
  * Sort Key: Price
 **/
 type Product struct {
-    Title string`json:"title" binding:"required"`
-    Price int64`json:"price" binding:"required"`
-    CreatedAt string`json:"createdAt"`
+    Title string`json:"title" binding:"required"`   // Title of the product
+    Price int64`json:"price" binding:"required"`    // Price of product in Cents
+    CreatedAt string`json:"createdAt"`              // to be generated automatically
 }
 
 var tableName = "shipt.test"
@@ -37,7 +37,7 @@ func Create(product Product) {
     if err != nil {
         fmt.Println("Got error calling MarshalMap:")
         fmt.Println(err.Error())
-        os.Exit(1)
+        os.Exit(1)                                  // TODO: Can we raise exception instead of exit
     }
 
     dynamodbService.AddRecord(item, tableName)
