@@ -17,7 +17,7 @@ import (
 var svc = New()
 
 func New() *dynamodb.DynamoDB {
-    sess, err := session.NewSession(&aws.Config{
+    sess, err := session.NewSession(&aws.Config {
         Region: aws.String("us-west-1")},
     )
 
@@ -45,6 +45,7 @@ func AddRecord(item map[string]*dynamodb.AttributeValue, tableName string) {
     }
 }
 
+// TODO: service should not know about this logic, move this out of service, I miss ORM!
 func conditionFromPrice(price string, comp string) string {
     switch comp {
     case "EQ":
@@ -59,7 +60,7 @@ func conditionFromPrice(price string, comp string) string {
         return "price >  :price"
     }
 
-    return "price  = :price"
+    return "price = :price"
 }
 
 func conditionFromPriceRange(price string) string {
@@ -83,27 +84,39 @@ func expressionAttributesForPriceRance(title string, price string) map[string]*d
 }
 
 // Query Condition: EQ | LE | LT | GE | GT | BEGINS_WITH | BETWEEN
-// TODO: Cover scenario when price is absent
+// TODO:
+//  - Cover scenario when price is absent
+//  - Get table metadata from model
 func Query(tableName string, title string, price string, comp string) *dynamodb.QueryOutput {
-    condition := "title = :title AND "
+    condition := "title = :title"
+
     expressionAttributes := map[string]*dynamodb.AttributeValue {
         ":title": {
             S: aws.String(title),
         },
-        ":price": {
-            N: aws.String(price),
-        },
     }
 
-    switch comp {
-    case "EQ", "LE", "LT", "GE", "GT":
-        condition += conditionFromPrice(price, comp)
-    case "BETWEEN":
-        condition += conditionFromPriceRange(price)
-        expressionAttributes = expressionAttributesForPriceRance(title, price)
+    if price != "" {
+        condition += " AND "
+
+        expressionAttributes = map[string]*dynamodb.AttributeValue {
+            ":title": {
+                S: aws.String(title),
+            },
+            ":price": {
+                N: aws.String(price),
+            },
+        }
+
+        switch comp {
+        case "EQ", "LE", "LT", "GE", "GT":
+            condition += conditionFromPrice(price, comp)
+        case "BETWEEN":
+            condition += conditionFromPriceRange(price)
+            expressionAttributes = expressionAttributesForPriceRance(title, price)
+        }
     }
 
-    // TODO: Get table metadata from model
     input := &dynamodb.QueryInput {
         ExpressionAttributeValues:  expressionAttributes,
         KeyConditionExpression:     aws.String(condition),
