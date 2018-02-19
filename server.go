@@ -53,6 +53,8 @@ func main() {
      *      - title : product title
      *      - price : price of the product in cents, example: 575
      *      - comp  : comparable operator, acceptable values are: EQ | LE | LT | GE | GT | BETWEEN
+     *  Example: ?title=Coffee&price=575&comp=GE
+     *      shoule return all items which have title Coffee and price greater than or equal to 575
     **/
     r.GET("/products/query", func(c *gin.Context) {
         c.Header("Content-Type", "application/json")
