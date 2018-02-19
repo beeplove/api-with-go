@@ -19,6 +19,13 @@ func main() {
         })
     })
 
+    /**
+     *  POST /products endpoint take the following as an example in the request body
+     *      {
+     *          "title": "Coffee",
+     *          "price": 1275       // price in cents
+     *      }
+    **/
     r.POST("/products", func(c *gin.Context) {
         c.Header("Content-Type", "application/json")
 
@@ -41,12 +48,18 @@ func main() {
         })
     })
 
+    /**
+     *  query endpoint takes three params,
+     *      - title : product title
+     *      - price : price of the product in cents, example: 575
+     *      - comp  : comparable operator, acceptable values are: EQ | LE | LT | GE | GT | BETWEEN
+    **/
     r.GET("/products/query", func(c *gin.Context) {
         c.Header("Content-Type", "application/json")
 
-        title :=    c.DefaultQuery("title", "Coffee")
-        comp :=     c.DefaultQuery("comp", "EQ")
-        price :=    c.Query("price")
+        title       := c.DefaultQuery("title", "Coffee")
+        price       := c.Query("price")
+        comp        := c.DefaultQuery("comp", "EQ")
 
         products := product.Query(title, price, strings.ToUpper(comp))
 

@@ -23,9 +23,9 @@ import (
  * Sort Key: Price
 **/
 type Product struct {
-    Title string`json:"title" binding:"required"`   // Title of the product
-    Price int64`json:"price" binding:"required"`    // Price of product in Cents
-    CreatedAt string`json:"createdAt"`              // to be generated automatically
+    Title string        `json:"title" binding:"required"`   // Title of the product
+    Price int64         `json:"price" binding:"required"`   // Price of product in Cents
+    CreatedAt string    `json:"createdAt"`                  // to be generated automatically
 }
 
 var tableName = "shipt.test"
@@ -39,7 +39,7 @@ func Create(product Product) {
         fmt.Println(err.Error())
         os.Exit(1)                                  // TODO: Can we raise exception instead of exit
     }
-
+    fmt.Println(item)
     dynamodbService.AddRecord(item, tableName)
 }
 

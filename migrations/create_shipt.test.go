@@ -90,13 +90,13 @@ func create(sess *session.Session) {
 }
 
 func main() {
-    // Unused variables
-    _ = sess
-    _ = reflect.TypeOf
-
     sess, err := session.NewSession(&aws.Config {
         Region: aws.String("us-west-1")},
     )
+
+    // Unused variables
+    _ = sess
+    _ = reflect.TypeOf
 
     if err != nil {
         fmt.Println("Got error when creating new AWS session")
