@@ -104,5 +104,6 @@ func main() {
         os.Exit(1)
     }
 
+    // TODO: Use tableNames() to check if table already exists.
     create(sess)
 }

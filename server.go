@@ -61,8 +61,18 @@ func main() {
         price       := c.Query("price")
         comp        := c.DefaultQuery("comp", "EQ")
 
-        products := product.Query(title, price, strings.ToUpper(comp))
+        products, err := product.Query(title, price, strings.ToUpper(comp))
 
+        if err != nil {
+            c.JSON(http.StatusUnprocessableEntity, gin.H {
+                "status": "error",
+                "code": 1001,       // application error code
+                "message": "Something went wrong",
+                "description": "for more information, visit http://localhost:8080/errors/1001",
+            })
+
+            return
+        }
         c.JSON(http.StatusOK, gin.H {
             "status": "success",
             "data": products,

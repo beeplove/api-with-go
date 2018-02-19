@@ -31,6 +31,10 @@ type Product struct {
     CreatedAt string    `json:"createdAt"`                  // to be generated automatically
 }
 
+type ProductError struct {
+    Err error
+}
+
 var tableName = "shipt.test"
 
 func Create(product Product) {
@@ -46,17 +50,17 @@ func Create(product Product) {
     dynamodbService.AddRecord(item, tableName)
 }
 
-func Query(title string, price string, comp string) []Product {
+func Query(title string, price string, comp string) (products []Product, err error) {
     input       := queryInput(title, price, comp)
     resp        := dynamodbService.Query(input)
-    products    := []Product{}
+    products    = []Product{}
 
-    err := dynamodbattribute.UnmarshalListOfMaps(resp.Items,  &products)
+    err = dynamodbattribute.UnmarshalListOfMaps(resp.Items, &products)
     if err != nil {
         fmt.Errorf("failed to unmarshal Query result items, %v", err)
     }
 
-    return products
+    return products, err
 }
 
 func queryInput(title string, price string, comp string) *dynamodb.QueryInput {
@@ -86,7 +90,8 @@ func queryInput(title string, price string, comp string) *dynamodb.QueryInput {
             condition += conditionFromPrice(price, comp)
         case "BETWEEN":
             condition += conditionFromPriceRange(price)
-            expressionAttributes = expressionAttributesForPriceRance(title, price)
+            expressionAttributes = expressionAttributesForPriceRange(title, price)
+
         }
     }
 
@@ -120,10 +125,10 @@ func conditionFromPriceRange(price string) string {
     return "price BETWEEN :price1 AND :price2"
 }
 
-func expressionAttributesForPriceRance(title string, price string) map[string]*dynamodb.AttributeValue {
+func expressionAttributesForPriceRange(title string, price string) (products map[string]*dynamodb.AttributeValue) {
     prices := strings.Split(price, "-")
 
-    return map[string]*dynamodb.AttributeValue {
+    products = map[string]*dynamodb.AttributeValue {
         ":title": {
             S: aws.String(title),
         },
@@ -134,4 +139,6 @@ func expressionAttributesForPriceRance(title string, price string) map[string]*d
             N: aws.String(prices[1]),
         },
     }
+
+    return products
 }
