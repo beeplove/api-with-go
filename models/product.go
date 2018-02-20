@@ -36,7 +36,9 @@ type ProductError struct {
 
 var tableName = "shipt.test"
 
-func Create(product Product) (*dynamodb.PutItemOutput, error){
+
+// TODO: Not sure who to extract item created from PutItemOutput, otherewise return Product instead of PutItemOutput
+func Create(product Product) (*dynamodb.PutItemOutput, error) {
     product.CreatedAt = time.Now().Format(time.RFC3339)
 
     item, err := dynamodbattribute.MarshalMap(product)

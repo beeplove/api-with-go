@@ -34,19 +34,16 @@ func AddRecord(item map[string]*dynamodb.AttributeValue, tableName string) (*dyn
 
     output, err := svc.PutItem(input)
 
-    // if err != nil {
-    //     fmt.Println("Got error calling PutItem:")
-    //     fmt.Println(err.Error())
-    //     os.Exit(1)
-    // }
-
     return output, err
 }
 
+// TODO: Service should create QueryInput, so that model doesn't need to know about this concern
 func query(tableName string, partitionKey string, sortKey string, comparisonOperator string) {
 
 }
 
+
+// TODO: return error instead of just printing it out
 func Query(input *dynamodb.QueryInput) *dynamodb.QueryOutput {
     result, err := svc.Query(input)
     if err != nil {

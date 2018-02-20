@@ -15,9 +15,9 @@ server should be running on port 8080 and can be checked by visiting http://loca
 
 ## Available Endpoints
 
-1. POST /products
+#### POST /products
 
-which take json in the request body, example:
+To create new product, which take json in the request body, example:
 
 ```
 {
@@ -28,9 +28,27 @@ which take json in the request body, example:
 
 price take integer value which represents price of the product in cents
 
-2. GET /products/query
+#### GET /products/query
 
 query endpoint take folling three params
-- title
-- price
-- comp
+- title - title of the product
+- price - price of the product in cents
+- comp - EQ | LE | LT | GE | GT | BETWEEN
+
+Examples:
+
+- `/products/query?title=Coffee`
+
+to return all item which has title Coffee
+
+- `/products/query?title=Cofdee&price=1275`
+
+to return item with title Coffee and price 1275
+
+- `/products/query?title=Coffee&price=1275&comp=GE`
+
+to return items with title Coffee and price greater than or equal to 1275
+
+- `/proudcts/query?title=Coffee&price=500-2200&comp=BETWEEN`
+
+to return items with title Coffee and price is between 500 and 2200
