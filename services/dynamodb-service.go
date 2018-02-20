@@ -13,6 +13,7 @@ import (
 
 var svc = new()
 
+// TODO: can os.Exit be avoided?
 func new() *dynamodb.DynamoDB {
     sess, err := session.NewSession(&aws.Config {
         Region: aws.String("us-west-1")},
@@ -27,7 +28,10 @@ func new() *dynamodb.DynamoDB {
     return dynamodb.New(sess)
 }
 
-func AddRecord(item map[string]*dynamodb.AttributeValue, tableName string) (*dynamodb.PutItemOutput, error){
+/**
+ * To add an item in the table
+**/
+func AddRecord(item map[string]*dynamodb.AttributeValue, tableName string) (*dynamodb.PutItemOutput, error) {
     input := &dynamodb.PutItemInput {
         Item: item,
         TableName: aws.String(tableName),
@@ -42,6 +46,10 @@ func AddRecord(item map[string]*dynamodb.AttributeValue, tableName string) (*dyn
 //  - Need to have data type of partitionKey and sortKey
 //  - consider creating a struct or look into dynamodb referece for a struct that can be used
 //      to describe an attribute and it's value, this may allow to deal with too many params
+
+/**
+ * generate dynamodb.QueryInput to be used by Query
+**/
 func generateQueryInput(
         tableName string,
         partitionKeyName string,
@@ -84,7 +92,9 @@ func generateQueryInput(
     return input
 }
 
-
+/**
+ * to build statement like attr = :attr, to be used by QueryInput
+**/
 func conditionForSortKey(sortKeyName string, comp string) string {
     switch comp {
     case "EQ":
@@ -102,6 +112,9 @@ func conditionForSortKey(sortKeyName string, comp string) string {
     return fmt.Sprintf("%s = :%s", sortKeyName, sortKeyName)
 }
 
+/**
+ * to build statement like sortKey BETWEEN :sortKey1 AND :sortKey2, to be used by QueryInput
+**/
 func conditionForSortKeyRange(sortKeyName string) string {
     return fmt.Sprintf("%s BETWEEN :%s1 AND :%s2", sortKeyName, sortKeyName, sortKeyName)
 }
@@ -127,7 +140,9 @@ func expressionAttributesForSortKeyRange(
     }
 }
 
-
+/**
+ *  to perform a Query operation to dynamodb
+**/
 func Query(
         tableName string,
         partitionKeyName string,
