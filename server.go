@@ -14,6 +14,7 @@ func main() {
 
     r.GET("/health", func(c *gin.Context) {
         c.Header("Content-Type", "application/json")
+
         c.JSON(http.StatusOK, gin.H {
             "status": "success",
         })
@@ -32,16 +33,28 @@ func main() {
         p := product.Product{}
 
         if err := c.BindJSON(&p); err != nil {
-            c.JSON(http.StatusBadRequest, gin.H {
-                "error":  "json decoding : " + err.Error(),
-                "status": http.StatusBadRequest,
+            c.JSON(http.StatusUnprocessableEntity, gin.H {
+                "status": "error",
+                "code": 2001,       // application error code
+                "message": err.Error(),
+                "description": "for more information, visit http://localhost:8080/errors/2001",
             })
 
             return
         }
 
-        // TODO: what if product is not created for whatever reason
-        product.Create(p)
+        _, err := product.Create(p)
+
+        if err != nil {
+            c.JSON(http.StatusUnprocessableEntity, gin.H {
+                "status": "error",
+                "code": 2101,       // application error code
+                "message": err.Error(),
+                "description": "for more information, visit http://localhost:8080/errors/2101",
+            })
+
+            return
+        }
 
         c.JSON(http.StatusOK, gin.H {
             "status": "success",
@@ -75,6 +88,7 @@ func main() {
 
             return
         }
+
         c.JSON(http.StatusOK, gin.H {
             "status": "success",
             "data": products,

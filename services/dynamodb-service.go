@@ -26,19 +26,25 @@ func new() *dynamodb.DynamoDB {
     return dynamodb.New(sess)
 }
 
-func AddRecord(item map[string]*dynamodb.AttributeValue, tableName string) {
+func AddRecord(item map[string]*dynamodb.AttributeValue, tableName string) (*dynamodb.PutItemOutput, error){
     input := &dynamodb.PutItemInput {
         Item: item,
         TableName: aws.String(tableName),
     }
 
-    _, err := svc.PutItem(input)
+    output, err := svc.PutItem(input)
 
-    if err != nil {
-        fmt.Println("Got error calling PutItem:")
-        fmt.Println(err.Error())
-        os.Exit(1)
-    }
+    // if err != nil {
+    //     fmt.Println("Got error calling PutItem:")
+    //     fmt.Println(err.Error())
+    //     os.Exit(1)
+    // }
+
+    return output, err
+}
+
+func query(tableName string, partitionKey string, sortKey string, comparisonOperator string) {
+
 }
 
 func Query(input *dynamodb.QueryInput) *dynamodb.QueryOutput {

@@ -8,7 +8,6 @@ package product
 
 import (
     "fmt"
-    "os"
     "time"
     "strings"
 
@@ -37,17 +36,17 @@ type ProductError struct {
 
 var tableName = "shipt.test"
 
-func Create(product Product) {
+func Create(product Product) (*dynamodb.PutItemOutput, error){
     product.CreatedAt = time.Now().Format(time.RFC3339)
 
     item, err := dynamodbattribute.MarshalMap(product)
     if err != nil {
-        fmt.Println("Got error calling MarshalMap:")
-        fmt.Println(err.Error())
-        os.Exit(1)                                  // TODO: Can we raise exception instead of exit
+        return &dynamodb.PutItemOutput{}, err
     }
-    fmt.Println(item)
-    dynamodbService.AddRecord(item, tableName)
+
+    output, err := dynamodbService.AddRecord(item, tableName)
+
+    return output, err
 }
 
 func Query(title string, price string, comp string) (products []Product, err error) {
@@ -91,7 +90,6 @@ func queryInput(title string, price string, comp string) *dynamodb.QueryInput {
         case "BETWEEN":
             condition += conditionFromPriceRange(price)
             expressionAttributes = expressionAttributesForPriceRange(title, price)
-
         }
     }
 
