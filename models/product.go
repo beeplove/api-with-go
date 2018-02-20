@@ -1,10 +1,9 @@
 package product
 
-//
-// TODO:
-//  - Add more fields such as, categories
-//  - create shipt.test from app
-//
+/**
+ * product package is to represent application model Product
+ *
+**/
 
 import (
     "fmt"
@@ -35,7 +34,10 @@ type ProductError struct {
 var tableName = "shipt.test"
 
 
-// TODO: Not sure how to extract item created from PutItemOutput, otherewise return Product instead of PutItemOutput
+// TODO:
+//  Not sure how to extract item created from PutItemOutput,
+//  otherewise return Product instead of PutItemOutput,
+//  which would allow model to not to be tightly coupled with service
 func Create(product Product) (*dynamodb.PutItemOutput, error) {
     product.CreatedAt = time.Now().Format(time.RFC3339)
 

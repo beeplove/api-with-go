@@ -43,9 +43,10 @@ func AddRecord(item map[string]*dynamodb.AttributeValue, tableName string) (*dyn
 }
 
 // TODO:
-//  - Need to have data type of partitionKey and sortKey
+//  - Currently partitionKey is assumed to be a S, and sortKey assumed to be a N, to avoid this coupling,
+//      we need to receive this info from model passed to service.
 //  - consider creating a struct or look into dynamodb referece for a struct that can be used
-//      to describe an attribute and it's value, this may allow to deal with too many params
+//      to describe an attribute and it's value, this may allow to avoid dealing with too many params
 
 /**
  * generate dynamodb.QueryInput to be used by Query
@@ -66,6 +67,9 @@ func generateQueryInput(
         },
     }
 
+    /**
+     * if sortKeyValue exist, we need to take comparison operator into account when building QueryInput
+    **/
     if sortKeyValue != "" {
         condition += " AND "
 
